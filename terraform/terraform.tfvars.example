@@ -1,0 +1,28 @@
+# Copy to terraform.tfvars and fill in. terraform.tfvars is gitignored.
+
+# --- Proxmox connection ---
+proxmox_endpoint  = "https://192.168.1.10:8006/"
+proxmox_api_token = "terraform@pve!terraform=00000000-0000-0000-0000-000000000000"
+proxmox_node      = "pve"
+
+# --- Template to clone ---
+# Create a cloud-init template first (see README), then put its VMID here.
+template_vm_id = 9000
+datastore_id   = "local-lvm"
+network_bridge = "vmbr0"
+
+# --- Worker sizing ---
+worker_count     = 2
+worker_cores     = 2
+worker_memory    = 4096
+worker_disk_size = 32
+
+# --- Networking ---
+worker_ip_base = ["192.168.1.201/24", "192.168.1.202/24"]
+gateway        = "192.168.1.1"
+
+# --- cloud-init access (for Ansible) ---
+ci_user = "ubuntu"
+ssh_public_keys = [
+  "ssh-ed25519 AAAA... you@host",
+]

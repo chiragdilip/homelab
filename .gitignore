@@ -1,0 +1,35 @@
+# ===========================================================================
+# Repo-wide ignores. gitignore patterns match at any depth, so these apply
+# to terraform/, ansible/, clusters/, etc. without per-folder files.
+# ===========================================================================
+
+# --- Terraform ---
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform/
+.terraform.lock.hcl
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# --- Ansible ---
+*.retry
+# vault password files / decrypted secrets
+vault-password*
+*.vault
+
+# --- Kubernetes / Flux ---
+# kubeconfigs and joined-cluster tokens
+kubeconfig
+*.kubeconfig
+node-token
+
+# --- General secrets / local ---
+.env
+*.pem
+*.key
+.DS_Store
