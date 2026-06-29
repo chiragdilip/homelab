@@ -44,6 +44,14 @@ resource "proxmox_virtual_environment_vm" "worker" {
   initialization {
     datastore_id = var.datastore_id
 
+    # Merged with the user_account-generated user-data; installs qemu-guest-agent.
+    vendor_data_file_id = proxmox_virtual_environment_file.worker_vendor_data.id
+
+    # Static IPs get no DHCP-provided DNS, so we must set resolvers explicitly.
+    dns {
+      servers = var.dns_servers
+    }
+
     ip_config {
       ipv4 {
         address = length(var.worker_ip_base) > count.index ? var.worker_ip_base[count.index] : "dhcp"

@@ -92,13 +92,25 @@ variable "worker_disk_size" {
 variable "worker_ip_base" {
   description = "Static IP CIDRs per worker, index-aligned with worker_count. Leave empty for DHCP."
   type        = list(string)
-  default     = ["192.168.1.201/24", "192.168.1.202/24"]
+  default     = ["192.168.2.201/24", "192.168.2.202/24"]
 }
 
 variable "gateway" {
   description = "Default gateway for the workers"
   type        = string
-  default     = "192.168.1.1"
+  default     = "192.168.2.1"
+}
+
+variable "snippets_datastore" {
+  description = "Datastore that holds cloud-init snippets (must have the Snippets content type enabled; usually 'local')"
+  type        = string
+  default     = "local"
+}
+
+variable "dns_servers" {
+  description = "DNS resolvers for the workers. Set your router IP first in tfvars (so local names resolve), public as fallback. Required for static IPs since no DHCP-provided DNS."
+  type        = list(string)
+  default     = ["8.8.8.8", "1.1.1.1"]
 }
 
 variable "ci_user" {
