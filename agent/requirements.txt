@@ -1,4 +1,9 @@
-# Local-only deps. The 'ollama' client talks to the Ollama server on localhost;
-# no data leaves the machine.
+# Local-first deps. The 'ollama' client talks to the Ollama server; web tools use
+# requests/ddgs for internet access. FastAPI/uvicorn serve the HTTP API.
 ollama>=0.3.0
 PyYAML>=6.0
+requests>=2.31
+ddgs>=6.0            # DuckDuckGo search (no API key) for web_search
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pydantic>=2.6

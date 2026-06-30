@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+workspace/
+.git/
+README.md
+k8s/
