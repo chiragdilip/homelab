@@ -1,0 +1,4 @@
+# Local-only deps. The 'ollama' client talks to the Ollama server on localhost;
+# no data leaves the machine.
+ollama>=0.3.0
+PyYAML>=6.0

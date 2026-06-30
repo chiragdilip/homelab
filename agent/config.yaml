@@ -1,0 +1,27 @@
+# Local homelab agent configuration. Everything here is local-only.
+
+# --- Model / Ollama server (runs on the Jetson) ---
+ollama_host: "http://127.0.0.1:11434"   # local Ollama; nothing leaves the box
+model: "qwen2.5:3b"                       # fits the 8GB Orin Nano (unified mem); 7b OOMs unless RAM is freed
+
+# --- Agent behaviour ---
+max_iterations: 8        # safety cap on tool-call/reasoning loops per request
+temperature: 0.1         # low = more deterministic, better for ops tasks
+
+# --- Safety ---
+# Mutating/shell actions require explicit confirmation at the prompt.
+allow_shell: false       # set true to enable the gated run_shell tool
+shell_allowlist:         # only these command prefixes may run, even when allowed
+  - "kubectl get"
+  - "kubectl describe"
+  - "kubectl top"
+  - "ping -c"
+  - "systemctl status"
+
+# --- Persona / instructions ---
+system_prompt: |
+  You are a local homelab operations assistant running entirely on a Jetson Orin Nano.
+  You help manage a 3-node k3s cluster (control plane on a Raspberry Pi 5, two worker VMs on Proxmox).
+  Use the provided tools to inspect the cluster and homelab before answering; do not guess at live state.
+  Prefer read-only tools. For anything that changes state, explain what you intend to do and ask for confirmation.
+  Be concise and precise. When you report status, cite the actual tool output.
