@@ -1,0 +1,48 @@
+# Installs k3s: server on the Pi control plane, agents on the worker VMs.
+# Run from the ansible/ dir:  ansible-playbook playbooks/install-k3s.yml
+---
+
+# ---------------------------------------------------------------------------
+# PLAY 1 — Control plane (Pi): install k3s as a server and grab the join token.
+# ---------------------------------------------------------------------------
+- name: Install k3s server on control plane
+  hosts: control_plane
+  tasks:
+    - name: Run the k3s install script in server mode
+      ansible.builtin.shell:
+        cmd: >
+          curl -sfL https://get.k3s.io |
+          INSTALL_K3S_VERSION="{{ k3s_version }}"
+          sh -s - server --write-kubeconfig-mode 644
+      args:
+        creates: /usr/local/bin/k3s    # idempotency: skip if k3s already installed
+
+    - name: Wait for the node-token to exist
+      ansible.builtin.wait_for:
+        path: /var/lib/rancher/k3s/server/node-token
+
+    - name: Read the cluster join token
+      ansible.builtin.slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: k3s_node_token
+
+    - name: Stash the token as a fact for the workers to use
+      ansible.builtin.set_fact:
+        k3s_token: "{{ k3s_node_token.content | b64decode | trim }}"
+
+# ---------------------------------------------------------------------------
+# PLAY 2 — Workers (VMs): install k3s as agents and join the control plane.
+# ---------------------------------------------------------------------------
+- name: Install k3s agents on workers
+  hosts: workers
+  tasks:
+    - name: Run the k3s install script in agent mode
+      ansible.builtin.shell:
+        cmd: >
+          curl -sfL https://get.k3s.io |
+          INSTALL_K3S_VERSION="{{ k3s_version }}"
+          K3S_URL="{{ k3s_url }}"
+          K3S_TOKEN="{{ hostvars['k3s-control'].k3s_token }}"
+          sh -s - agent
+      args:
+        creates: /usr/local/bin/k3s    # idempotency: skip if already an agent

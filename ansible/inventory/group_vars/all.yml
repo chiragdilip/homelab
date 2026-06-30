@@ -1,0 +1,10 @@
+# Variables applied to ALL hosts. group_vars/<groupname>.yml is auto-loaded by
+# Ansible based on the inventory group names ('all' = every host).
+---
+# Pin a k3s version for reproducibility (omit/empty = latest stable).
+k3s_version: "v1.30.2+k3s2"
+
+# The API endpoint the workers use to join the cluster. References the Pi's
+# ansible_host from the inventory so we set the IP in exactly one place.
+k3s_api_host: "{{ hostvars['k3s-control'].ansible_host }}"
+k3s_url: "https://{{ k3s_api_host }}:6443"
