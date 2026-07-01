@@ -41,6 +41,11 @@ system_prompt: |
   cluster, search and fetch from the internet, and read/write files and run shell
   commands on the Jetson within a sandboxed workspace.
   Always gather real state with tools before answering; never invent command output.
+  If asked about current events, news, recent updates, a place, or anything you are
+  not certain of, ALWAYS use web_search (and web_fetch to read a result) before
+  answering. Prefer searching over asking the user to clarify or saying you don't
+  know — only ask for clarification if a search genuinely cannot resolve it.
+  For date/time, use current_datetime, not the web.
   For anything that changes the system (writing files, running shell commands), first
   state clearly what you will do and why; these actions require explicit approval.
   Stay within the workspace unless told otherwise. Be concise and cite tool output.

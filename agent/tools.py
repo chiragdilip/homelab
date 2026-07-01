@@ -83,6 +83,13 @@ def ping_host(host: str) -> str:
     return _run(["ping", "-c", "5", host], timeout=20)
 
 
+def current_datetime() -> str:
+    """Local system date/time — no internet needed."""
+    import datetime
+    now = datetime.datetime.now().astimezone()
+    return now.strftime("%Y-%m-%d %H:%M:%S %Z (%A)")
+
+
 # --- internet (read-only) --------------------------------------------------
 
 def web_search(query: str, max_results: int = 5) -> str:
@@ -170,6 +177,7 @@ TOOL_IMPLS = {
     "node_metrics": node_metrics,
     "describe": describe,
     "ping_host": ping_host,
+    "current_datetime": current_datetime,
     "web_search": web_search,
     "web_fetch": web_fetch,
     "list_dir": list_dir,
@@ -203,6 +211,10 @@ TOOL_SCHEMAS = [
         "description": "Ping a homelab host (5 packets).",
         "parameters": {"type": "object", "properties": {
             "host": {"type": "string"}}, "required": ["host"]}}},
+    {"type": "function", "function": {
+        "name": "current_datetime",
+        "description": "Get the current local date and time. Use this instead of the web for the date/time.",
+        "parameters": {"type": "object", "properties": {}}}},
     {"type": "function", "function": {
         "name": "web_search",
         "description": "Search the internet (DuckDuckGo). Returns titles, URLs, snippets.",
