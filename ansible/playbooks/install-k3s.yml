@@ -37,12 +37,20 @@
   hosts: workers
   tasks:
     - name: Run the k3s install script in agent mode
+      vars:
+        # Turn "a=b,c=d" (node_labels hostvar) into "--node-label a=b --node-label c=d".
+        # Hosts without node_labels (the VMs) yield an empty string = no label flags.
+        node_label_args: >-
+          {{ (node_labels | default('')).split(',')
+             | select | map('regex_replace', '^', '--node-label ') | join(' ') }}
       ansible.builtin.shell:
         cmd: >
           curl -sfL https://get.k3s.io |
           INSTALL_K3S_VERSION="{{ k3s_version }}"
           K3S_URL="{{ k3s_url }}"
           K3S_TOKEN="{{ hostvars['k3s-control'].k3s_token }}"
-          sh -s - agent
+          sh -s - agent {{ node_label_args }}
       args:
         creates: /usr/local/bin/k3s    # idempotency: skip if already an agent
+      # NOTE: --node-label only applies at first install. To relabel an already-joined
+      # node, use `kubectl label node <name> ...` instead.
