@@ -70,7 +70,10 @@ class Agent:
             resp = self.client.chat(
                 model=self.cfg["model"], messages=messages,
                 tools=tools.TOOL_SCHEMAS,
-                options={"temperature": self.cfg.get("temperature", 0.1)},
+                options={
+                    "temperature": self.cfg.get("temperature", 0.1),
+                    "num_ctx": self.cfg.get("num_ctx", 2048),
+                },
             )
             msg = resp["message"]
             messages.append(msg)

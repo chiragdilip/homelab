@@ -8,6 +8,7 @@ model: "qwen2.5:7b"                       # 3b fits the Orin Nano; bump to 7b fo
 # --- Agent behaviour ---
 max_iterations: 10
 temperature: 0.1
+num_ctx: 2048            # context window; smaller = less KV-cache RAM (helps 7b fit on 8GB)
 
 # --- Internet access ---
 internet:
